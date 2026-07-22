@@ -301,6 +301,43 @@ body {
   100% { transform: translateY(-100vh) scale(1.2); opacity: 0; }
 }
 
+/* Photo Gallery */
+.photo-gallery-wrap {
+  max-width: 600px; width: 100%;
+}
+.photo-block {
+  margin-bottom: 50px; text-align: center;
+}
+.photo-block:last-child { margin-bottom: 0; }
+.photo-block-img {
+  width: 100%; max-width: 450px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,215,0,0.25);
+  box-shadow: 0 0 30px rgba(255,215,0,0.1);
+  transition: all 0.4s;
+  display: block; margin: 0 auto;
+}
+.photo-block-img:hover {
+  transform: scale(1.03);
+  box-shadow: 0 0 50px rgba(255,215,0,0.25);
+  border-color: rgba(255,215,0,0.5);
+}
+.photo-block-prayer {
+  font-family: 'Great Vibes', cursive;
+  font-size: clamp(1.3rem, 3.5vw, 1.8rem);
+  margin-top: 18px;
+  text-shadow: 0 0 15px rgba(255,215,0,0.2);
+  line-height: 1.6;
+  color: rgba(255,215,0,0.85);
+}
+.photo-block:nth-child(odd) .photo-block-prayer {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+}
+@media (max-width: 480px) {
+  .photo-block { margin-bottom: 35px; }
+}
+
 /* Love Meter */
 .love-meter-card {
   max-width: 500px; width: 100%; text-align: center;
@@ -552,6 +589,45 @@ body {
       <p>Happy Birthday, my love. Once again, I wish you all the happiness this world has to offer. I want to stay beside you forever, through every birthday, every season, every lifetime.</p>
       <p style="text-align:center; font-size: 1.3em; margin-top: 25px;">I love you endlessly.<br>Yours always,<br>Piyasa &#10084;&#65039;</p>
     </div>
+    <button class="replay-btn" id="letterNextBtn" style="margin-top:30px; display:block; margin-left:auto; margin-right:auto;">Next &#10084;&#65039;</button>
+  </div>
+</div>
+
+<!-- Photo Gallery Page -->
+<div id="photo-page" class="section">
+  <div class="glass-card photo-gallery-wrap" style="text-align:center;">
+    <h1 style="font-family:'Great Vibes',cursive; font-size:clamp(1.5rem,4vw,2.2rem); text-shadow:0 0 20px rgba(255,215,0,0.4);">Our Beautiful Memories &#10084;&#65039;</h1>
+    <div style="margin-top:25px;">
+      <div class="photo-block">
+        <img class="photo-block-img" src="photo1.jpg" alt="Memory 1" style="aspect-ratio:1; object-fit:cover;" />
+        <div class="photo-block-prayer">You are the most beautiful part of my life &#10084;&#65039;</div>
+      </div>
+      <div class="photo-block">
+        <img class="photo-block-img" src="photo2.jpg" alt="Memory 2" style="aspect-ratio:1; object-fit:cover;" />
+        <div class="photo-block-prayer">Every moment with you is a blessing I cherish &#10084;&#65039;</div>
+      </div>
+      <div class="photo-block">
+        <img class="photo-block-img" src="photo3.jpg" alt="Memory 3" style="aspect-ratio:1; object-fit:cover;" />
+        <div class="photo-block-prayer">You make my world brighter just by being in it &#10084;&#65039;</div>
+      </div>
+      <div class="photo-block">
+        <img class="photo-block-img" src="photo4.jpg" alt="Memory 4" style="aspect-ratio:1; object-fit:cover;" />
+        <div class="photo-block-prayer">My heart belongs to you, today and always &#10084;&#65039;</div>
+      </div>
+      <div class="photo-block">
+        <img class="photo-block-img" src="photo5.jpg" alt="Memory 5" style="aspect-ratio:1; object-fit:cover;" />
+        <div class="photo-block-prayer">You are my greatest adventure and my safest home &#10084;&#65039;</div>
+      </div>
+      <div class="photo-block">
+        <img class="photo-block-img" src="photo6.jpg" alt="Memory 6" style="aspect-ratio:1; object-fit:cover;" />
+        <div class="photo-block-prayer">Thank you for every smile you put on my face &#10084;&#65039;</div>
+      </div>
+      <div class="photo-block">
+        <img class="photo-block-img" src="photo7.jpg" alt="Memory 7" style="aspect-ratio:16/9; object-fit:cover;" />
+        <div class="photo-block-prayer">Happy Birthday my love. You are my everything, forever and always &#10084;&#65039;</div>
+      </div>
+    </div>
+    <button class="replay-btn" id="photoNextBtn" style="margin-top:35px;">Next &#10084;&#65039;</button>
   </div>
 </div>
 
@@ -1038,7 +1114,9 @@ body {
   }, { threshold: 0.3 });
   observer.observe(loveMeterSection);
 
-  $('continueBtn').addEventListener('click', () => transitionTo(5));
+  $('letterNextBtn').addEventListener('click', () => transitionTo(4));
+  $('photoNextBtn').addEventListener('click', () => transitionTo(5));
+  $('continueBtn').addEventListener('click', () => transitionTo(6));
 
   // ---- FINAL PAGE STARS ----
   function initStars() {
