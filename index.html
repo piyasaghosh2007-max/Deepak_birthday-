@@ -459,6 +459,12 @@ body {
   pointer-events: none; z-index: 60;
 }
 
+/* Firework Canvas */
+#fireworkCanvas {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  pointer-events: none; z-index: 55;
+}
+
 /* Responsive */
 @media (max-width: 480px) {
   .glass-card { padding: 25px 20px; }
@@ -508,6 +514,7 @@ body {
 <canvas id="particleCanvas"></canvas>
 <canvas id="mouseGlitterCanvas"></canvas>
 <canvas id="confettiCanvas"></canvas>
+<canvas id="fireworkCanvas"></canvas>
 
 <button id="musicBtn" class="show">&#9835;</button>
 
@@ -1133,6 +1140,121 @@ body {
     }
   }
   initStars();
+
+  // ---- FIREWORKS ----
+  const fwCanvas = $('fireworkCanvas');
+  const fwCtx = fwCanvas.getContext('2d');
+  let fireworks = [];
+  let fwRunning = false;
+  let fwAnimId = null;
+
+  function resizeFW() {
+    fwCanvas.width = window.innerWidth;
+    fwCanvas.height = window.innerHeight;
+  }
+  resizeFW();
+  window.addEventListener('resize', resizeFW);
+
+  class FireworkParticle {
+    constructor(x, y) {
+      this.x = x;
+      this.y = y;
+      const angle = Math.random() * Math.PI * 2;
+      const speed = Math.random() * 4 + 1;
+      this.vx = Math.cos(angle) * speed;
+      this.vy = Math.sin(angle) * speed;
+      this.life = 1;
+      this.decay = Math.random() * 0.02 + 0.015;
+      this.size = Math.random() * 3 + 1.5;
+      this.trail = [];
+    }
+    update() {
+      this.trail.push({ x: this.x, y: this.y });
+      if (this.trail.length > 6) this.trail.shift();
+      this.x += this.vx;
+      this.y += this.vy;
+      this.vy += 0.04;
+      this.life -= this.decay;
+    }
+    draw() {
+      for (let i = 0; i < this.trail.length; i++) {
+        const alpha = (i / this.trail.length) * this.life * 0.6;
+        fwCtx.beginPath();
+        fwCtx.arc(this.trail[i].x, this.trail[i].y, this.size * (i / this.trail.length), 0, Math.PI * 2);
+        fwCtx.fillStyle = `rgba(255,215,0,${alpha})`;
+        fwCtx.fill();
+      }
+      fwCtx.beginPath();
+      fwCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+      fwCtx.fillStyle = `rgba(255,215,0,${this.life * 0.9})`;
+      fwCtx.shadowBlur = 20;
+      fwCtx.shadowColor = 'rgba(255,215,0,0.8)';
+      fwCtx.fill();
+    }
+  }
+
+  function burstFirework(x, y) {
+    for (let i = 0; i < 40; i++) {
+      fireworks.push(new FireworkParticle(x, y));
+    }
+  }
+
+  let fwBurstCount = 0;
+  function addRandomBurst() {
+    if (!fwRunning) return;
+    const x = Math.random() * fwCanvas.width * 0.8 + fwCanvas.width * 0.1;
+    const y = Math.random() * fwCanvas.height * 0.5 + fwCanvas.height * 0.1;
+    burstFirework(x, y);
+    fwBurstCount++;
+    const delay = Math.max(400, 1200 - fwBurstCount * 10);
+    setTimeout(addRandomBurst, delay);
+  }
+
+  function animateFW() {
+    fwCtx.clearRect(0, 0, fwCanvas.width, fwCanvas.height);
+    for (let i = fireworks.length - 1; i >= 0; i--) {
+      const p = fireworks[i];
+      p.update();
+      p.draw();
+      if (p.life <= 0) {
+        fireworks.splice(i, 1);
+      }
+    }
+    if (fwRunning || fireworks.length > 0) {
+      fwAnimId = requestAnimationFrame(animateFW);
+    }
+  }
+
+  function startFireworks() {
+    if (fwRunning) return;
+    fwRunning = true;
+    fwBurstCount = 0;
+    burstFirework(fwCanvas.width / 2, fwCanvas.height * 0.3);
+    setTimeout(addRandomBurst, 600);
+    animateFW();
+  }
+
+  function stopFireworks() {
+    fwRunning = false;
+    if (fwAnimId) {
+      cancelAnimationFrame(fwAnimId);
+      fwAnimId = null;
+    }
+    fwCtx.clearRect(0, 0, fwCanvas.width, fwCanvas.height);
+    fireworks = [];
+  }
+
+  const finalPage = $('final-page');
+  const fwObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        startFireworks();
+      } else {
+        stopFireworks();
+      }
+    });
+  }, { threshold: 0.1 });
+  fwObserver.observe(finalPage);
 
   // ---- EASTER EGG ----
   let typed = '';
